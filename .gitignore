@@ -1,0 +1,5 @@
+*.png
+__pycache__/
+bak_simu1/
+bak_simu2/
+~*

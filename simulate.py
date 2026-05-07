@@ -87,9 +87,9 @@ def plot_and_save(loads, data_dict, title, filename):
     print(f"--> picture saved: {filename}")
 
 if __name__ == "__main__":
-    N_ports = 16
+    N_ports = 4
     time_slots = 10000 
-    num_iterations = 4 
+    num_iterations = 1
     loads = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85, 0.9, 0.95]
     
     hcf_max_cnt = N_ports - 1 

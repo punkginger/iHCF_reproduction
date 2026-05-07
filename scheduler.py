@@ -61,10 +61,9 @@ class iHCF(BaseScheduler):
         for iteration in range(self.num_iters):
             
             # Phase 1: Request 
-            # Note: In iHCF, the Request phase is implicit in the sense that the presence of a request is determined by checking if voq_status[i][j] > 0.
+            # the Request phase is implicit in the sense that the presence of a request is determined by checking if voq_status[i][j] > 0.
 
             # Phase 2: Grant
-            output_tied = [False] * self.N
             grants = []
             for idx in range(self.N):
                 grants.append(-1)
@@ -95,8 +94,7 @@ class iHCF(BaseScheduler):
                 else:
                     if self.tie_breaker == 'random':
                         # randomly select one from candidates
-                        rand_idx = random.randint(0, len(candidates) - 1)
-                        selected_i = candidates[rand_idx]
+                        selected_i = random.choice(candidates)
                     else: # round robin
                         # since it's grant phase, use out_ptr
                         for offset in range(self.N):
@@ -133,10 +131,10 @@ class iHCF(BaseScheduler):
                 if len(candidates) == 1:
                     selected_j = candidates[0]
                 else:
+                    input_tied = True
                     if self.tie_breaker == 'random':
                         # randomly select one from candidates
-                        rand_idx = random.randint(0, len(candidates) - 1)
-                        selected_j = candidates[rand_idx]
+                        selected_j = random.choice(candidates)
                     else: # 'rr' strategy
                         # round-robin strategy: use in_ptr
                         for offset in range(self.N):
@@ -154,10 +152,9 @@ class iHCF(BaseScheduler):
                 
                 # Pointer updates are only meaningful in 'rr' mode, for logical consistency
                 if self.tie_breaker == 'rr':
-                    if output_tied[selected_j] == True:
-                        self.out_ptr[selected_j] = (i + 1) % self.N
-                    if input_tied == True:
-                        self.in_ptr[i] = (selected_j + 1) % self.N
+                    self.out_ptr[selected_j] = (i + 1) % self.N # unconditional
+                if input_tied: # only if a tie in the accept phase
+                    self.in_ptr[i] = (selected_j + 1) % self.N
 
         return match_result
 
